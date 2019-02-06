@@ -1,7 +1,8 @@
 (function(options) {
 
   function init(data) {
-    var routing, map;
+    var geocoderLayer
+    var routing, map, geocoder;
     var waypoints = [];
 
     function getMode() {
@@ -26,9 +27,15 @@
 
     function resetMap() {
       map.removeControl(routing);
+      map.removeControl(geocoder);
+      map.removeLayer(geocoderLayer);
     }
 
     function initMap() {
+      geocoderLayer = L.featureGroup();
+
+      map.addLayer(geocoderLayer);
+
       routing = L.Routing.control({
         router: L.Routing.mt($.extend(options, {
           mode: getMode(),
@@ -40,6 +47,36 @@
         waypoints: waypoints,
         routeWhileDragging: true
       }).addTo(map);
+
+      geocoder = L.Control.geocoder({
+        geocoder: L.Control.Geocoder.nominatim({
+          serviceUrl: "/0.1/geocoder/",
+          geocodingQueryParams: { api_key: options.apiKey }
+        }),
+        position: 'topleft',
+        placeholder: 'Recherche d\'adresse...',
+        errorMessage: 'Pas de résultat',
+        defaultMarkGeocode: false
+      })
+      .on('markgeocode', function(e) {
+        this._map.fitBounds(e.geocode.bbox, {
+          maxZoom: 15,
+          padding: [20, 20]
+        });
+        var focusGeocode = L.marker(e.geocode.center, {
+          icon: new L.divIcon({
+            html: '',
+            iconSize: new L.Point(14, 14),
+            className: 'focus-geocoder'
+          })
+        }).addTo(geocoderLayer);
+        setTimeout(function() {
+          geocoderLayer.removeLayer(focusGeocode);
+        }, 2000);
+      })
+      .addTo(map);
+
+      $('.leaflet-control-geocoder-icon').prop('title', 'Rechercher une addresse');
     }
 
     function initDimensions(mode) {

@@ -21,6 +21,7 @@ require 'grape-swagger'
 require './api/v01/route'
 require './api/v01/matrix'
 require './api/v01/isoline'
+require './api/v01/geocoder'
 require './api/v01/capability'
 
 module Api
@@ -58,6 +59,7 @@ module Api
       mount Matrix
       mount Isoline
       mount Capability
+      mount Geocoder
 
       private
 
