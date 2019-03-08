@@ -24,6 +24,7 @@ require './wrappers/crow'
 require './wrappers/osrm5'
 require './wrappers/otp'
 require './wrappers/here'
+require './wrappers/mapbox'
 
 require './lib/cache_manager'
 
@@ -62,6 +63,7 @@ module RouterWrapper
   OTP_BORDEAUX = Wrappers::Otp.new(CACHE, url: 'http://localhost:7001', router_id: 'bordeaux', licence: 'ODbL', attribution: 'Bordeaux Métropole', area: 'Bordeaux', crs: 'EPSG:2154')
   HERE_TRUCK = Wrappers::Here.new(CACHE, app_id: ENV['HERE_APP_ID'], app_code: ENV['HERE_APP_CODE'], mode: 'truck')
   HERE_CAR = Wrappers::Here.new(CACHE, app_id: ENV['HERE_APP_ID'], app_code: ENV['HERE_APP_CODE'], mode: 'car')
+  MAPBOX = Wrappers::MapBox.new(CACHE, access_token: 'MAPBOX_ACCESS_TOKEN', url_matrix: 'https://api.mapbox.com/directions-matrix/v1/mapbox/driving')
 
   @@c = {
     product_title: 'Router Wrapper API',
